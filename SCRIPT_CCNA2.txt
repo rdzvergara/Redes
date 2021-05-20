@@ -1,0 +1,47 @@
+Bloco: 192.168.0.0/24
+##LAN-A 50 hosts##
+192.168.0.0/26
+192.168.0.1 (g0/0 R1)
+192.168.0.2 (SVI 1 LAN-A)
+192.168.0.62 (PC-A)
+##LAN-B 40 hosts##
+192.168.0.64/26
+192.168.0.65 (g0/1 R1)
+192.168.0.66 (SVI 1 LAN-B)
+192.168.0.126 (PC-B)
+
+##Reservas##
+192.168.0.128/26
+192.168.0.192/26
+
+#######################
+###Conf Switch LAN-A###
+#######################
+interface vlan 1
+ ip add 192.168.0.2 255.255.255.192
+ no shutdown
+ip default-gateway 192.168.0.1
+
+#######################
+###Conf Switch LAN-B###
+#######################
+interface vlan 1
+ ip add 192.168.0.66 255.255.255.192
+ no shutdown
+ip default-gateway 192.168.0.65
+
+#########################
+###Conf CustomerRouter###
+#########################
+enable secret Class123
+line con 0
+ password Cisco123
+ login
+hostname CustomerRouter
+interface g0/0
+ ip add 192.168.0.1 255.255.255.192
+ no shutdown
+interface g0/1
+ ip add 192.168.0.65 255.255.255.192
+ no shutdown
+do copy running-config startup-config

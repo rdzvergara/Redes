@@ -1,0 +1,38 @@
+##2001:db8:acad:00c8::/64
+  2001:db8:acad:00c8::1 (g0/0 R1)
+##2001:db8:acad:00c9::/64
+  2001:db8:acad:00c9::1 (g0/1 R1)
+##2001:db8:acad:00cA::/64
+  2001:db8:acad:00cA::1 (g0/0 R2)
+##2001:db8:acad:00cB::/64
+  2001:db8:acad:00cB::1 (g0/1 R2)
+##2001:db8:acad:00cC::/64
+  2001:db8:acad:00cC::1 (s0/0/0 R1)
+  2001:db8:acad:00cC::2 (s0/0/0 R2)
+
+##Configuração R1##
+interface g0/0
+ ipv6 add 2001:db8:acad:00c8::1/64
+ ipv6 add fe80::1 link-local
+ no shutdown
+interface g0/1
+ ipv6 add 2001:db8:acad:00c9::1/64
+ ipv6 add fe80::1 link-local
+ no shutdown
+interface s0/0/0
+ ipv6 add 2001:db8:acad:00cC::1/64
+ ipv6 add fe80::1 link-local
+ no shutdown
+##Configuração R2##
+interface g0/0
+ ipv6 add 2001:db8:acad:00cA::1/64
+ ipv6 add fe80::2 link-local
+ no shutdown
+interface g0/1
+ ipv6 add 2001:db8:acad:00cB::1/64
+ ipv6 add fe80::2 link-local
+ no shutdown
+interface s0/0/0
+ ipv6 add 2001:db8:acad:00cC::2/64
+ ipv6 add fe80::2 link-local
+ no shutdown

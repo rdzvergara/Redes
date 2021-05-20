@@ -1,0 +1,110 @@
+## Configurações básicas ##
+enable 
+configure terminal
+hostname RT_01
+no ip domain-lookup
+enable secret cisco
+service password-encryption
+banner motd #ACESSO RESTRITO#
+username admin secret cisco
+line console 0
+ login local
+line vty 0 4
+ login local
+ipv6 unicast-routing
+ip cef
+ipv6 cef
+copy running-config startup-config
+reload
+
+## Configuração SSHv2 ##
+enable 
+configure terminal
+hostname RT_01
+ip domain-name cisco.com
+crypto key generate rsa general-keys modulus 2048
+ip ssh version 2 
+ip ssh time-out 30
+ip ssh authentication-retries 4
+line vty 0 4
+ transport input ssh
+ exec-timeout 5 
+
+## Configuração das Interfaces ##
+enable 
+configure terminal
+interface g0/1
+ description LINK-TO-INTERNET
+ ip add 201.0.0.2 255.255.255.252
+ ipv6 add 2001:cafe:face:b00c::2/64
+ ipv6 add FE80::2 link-local
+ no shutdown
+interface g0/0
+ description LINK-TO-SW_01
+ ip add 192.168.10.1 255.255.255.0
+ ipv6 add 2001:db8:acad:10::1/64
+ ipv6 add FE80::1 link-local
+ no shutdown
+
+
+## Configuração DHCPv4 ##
+enable 
+configure terminal
+ip dhcp excluded-address 192.168.10.1
+ip dhcp excluded-address 192.168.10.2
+ip dhcp pool LAN
+ network 192.168.10.0 255.255.255.0
+ default-router 192.168.10.1
+ dns-server 8.8.8.8
+
+## Configuração DHCPv6 Stateless ##
+enable 
+configure terminal
+ipv6 dhcp pool LAN
+  dns-server 2001:4860:4860::8888
+interface g0/0
+  ipv6 dhcp server LAN
+  ipv6 nd other-config-flag
+
+## Configuração básica SW_01 ##
+enable
+clock set 15:52:00 27 april 2021
+configure terminal
+hostname SW_01
+no ip domain-lookup
+enable secret cisco
+service password-encryption
+banner motd #Acesso Restrito#
+username admin secret cisco
+line console 0
+  login local
+line vty 0 4
+  login local
+do wr
+
+## Configuração de endereçamento IP (Gerenciamento) ##
+enable 
+configure terminal
+interface vlan1
+ description Interface-Gerenciamento
+ ip add 192.168.10.2 255.255.255.0
+ no shutdown
+ip default-gateway 192.168.10.1
+
+## Configuração de rota estática padrão RT_01 ##
+ip route 0.0.0.0 0.0.0.0 201.0.0.1
+ipv6 route ::/0 g0/1 FE80::1
+
+## Configuração interface roteador INTERNET ##
+enable 
+configure terminal
+interface g0/0
+ ipv6 add FE80::1 link-local
+
+## Configuração rota roteador INTERNET ##
+ipv6 route 2001:db8:acad:10::/64 g0/0 FE80::2
+
+## Roteador Internet ##
+interface g0/1
+ ipv6 add FE80::1 link-local
+
