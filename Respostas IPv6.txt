@@ -1,0 +1,104 @@
+1)
+a- 128 bits
+b- Hexadecimal
+c- 8 hexadecatetos
+d- 340x10(36)
+e- Dual-Stack (Prioritário) ,Tunelamento, Tradução NAT.
+f- Unicast, Multicast e Anycast.
+
+2)
+________Unicast__________________________________________
+Unicast Global 		  --  200::/3
+Link-Local     		  --  FE80::/10
+Unique Local   		  --  FC00::/1
+Loopback       		  --  ::1
+Endereço não especificado --  ::
+________Multicast__________________________________________
+Range total               --  FF00::/8
+All-Routers               --  FF02::2
+All-Nodes                 --  FF02::1
+Prefixo Solicited-Node    --  FF02::1:FF00:0000/104
+
+
+
+
+3) 
+a- 2001:C8:CAF0:A0:A7BB::A
+
+b- 2860:E:150:BB:F8A7:3::D
+
+c-2901:FACE:B00C:A::AF:ABC
+
+4)
+a-FE80::ABAC:88FF:FE52:27F1
+
+b-FE80::C744:E9FF:FE01:EFA2
+
+5)
+a- 2001:FACE:B00C:ACAD:B5D5:86FF:FE7C:3881
+
+b- 2001:FACE:B00C:ACAD:3AF7:A7FF:FEF5:0A58
+
+6)
+a- FF02::1:FFAA:B577
+
+b- FF02::1:FFED:852A
+
+7)
+a-ultimo end: 2002:CF84:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF
+prox end: 2002:CF85::/32
+
+b-ultimo end: 2504:BB87:CD74:FFFF:FFFF:FFFF:FFFF:FFFF
+prox end: 2504:BB87:CD75::/48
+
+c-ultimo end: 2001:DB8:ACAD:CFFF:FFFF:FFFF:FFFF:FFFF
+prox end: 2001:DB8:ACAD:D000::/52
+
+d-ultimo end: 2860:CAFE:6006:13FF:FFFF:FFFF:FFFF:FFFF
+prox end: 2860:CAFE:6006:1400::/56
+
+8)
+a- /48 sendo 4 redes /64 -> 64-48= 16 bits de ID de interface
+   2(16) = 65536 ends
+	
+b- /48 sendo 4 redes /52 -> 52-48= 4 bits de ID de interface
+   2(4) = 16 ends
+
+c- /48 sendo 4 redes /56 -> 56-48= 8 bits de ID de interface
+   2(8) = 256 ends
+
+d- /48 sendo 4 redes /58 -> 58-48 = 10 bits de ID de interface
+   2(10)= 1024 ends
+
+9)
+a- 
+Router Solicitation
+_________________________
+	Origem        	            |  Destino
+L2:  AAAA.AAAA.AAAA 		       3333.0000.0002
+L3:  FE80::A8AA:AAFF:FEAA:AAAA	       FF02::2
+
+Router Advertisement
+_________________________
+	Origem        		    |  Destino
+L2:  BBBB.BBBB.BBBB                    3333.0000.0001
+L3:  FE80::1                           FF02::1
+
+
+b- 
+Neighbor Solicitation
+_________________________
+	Origem        	            |  Destino
+L2:  AAAA.AAAA.AAAA 		       3333.FFBB.BBBB
+L3:  2001::A8                          FF02::1:FFBB:BBBB
+
+Neighbor Advertisement
+_________________________
+	Origem        		    |  Destino
+L2:  BBBB.BBBB.BBBB                    AAAA.AAAA.AAAA
+L3:  2001:B9BB:BBFF:FFBB:BBBB          2001:A8AA:AAFF:FEAA:AAAA
+
+
+
+
+
