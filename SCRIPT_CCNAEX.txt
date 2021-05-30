@@ -1,0 +1,75 @@
+###Bloco: 192.168.1.0/24###
+###########################
+
+1: 192.168.1.0/27
+2: 192.168.1.32/27
+3: 192.168.1.64/27
+4: 192.168.1.96/27
+5: 192.168.1.128/28
+6: 192.168.1.144/28
+
+##First Floor LAN##
+Rede: 192.168.1.96/27
+First válido: 192.168.1.97 - Host 1
+	      192.168.1.98 - Host 2
+Last válido:  192.168.1.126 - g0/0
+Broadcast: 192.168.1.127
+Próx Rede:192.168.1.128
+
+##Second Floor LAN##
+Rede: 192.168.1.144/28
+First válido: 192.168.1.145 - Host 3
+              192.168.1.146 - Server
+	      192.168.1.157 - SVI
+Last válido:  192.168.1.158 - g0/1
+Broadcast: 192.168.1.159
+Próx Rede: 192.168.1.160
+
+
+## Configuração Building 1 Router ##
+
+hostname Building-1
+enable secret cisco
+security passwords min-length 10
+service password-encryption
+ipv6 unicast-routing 
+username admin secret cisco12345
+username netadmin secret Cisco_CCNA7
+ip domain-name cisco.com
+crypto key generate rsa general-keys modulus 1024
+ip ssh version 2
+line con 0
+ login local
+line vty 0 4
+ login local
+ transport input ssh
+line aux 0
+ login local
+
+interface g0/0
+ description First Floor LAN
+ ip add 192.168.1.126 255.255.255.224
+ ipv6 add 2001:db8:acad:a::1/64
+ ipv6 add fe80::1 link-local
+ no shutdown
+
+interface g0/1
+ description Second Floor LAN
+ ip add 192.168.1.158 255.255.255.240
+ ipv6 add 2001:db8:acad:b::1/64
+ ipv6 add fe80::1 link-local
+ no shutdown
+
+## Configuração Second Floor Switch ##
+
+interface vlan 1
+ ip add 192.168.1.157 255.255.255.240
+ no shutdown
+
+ip default-gateway 192.168.1.158
+username admin secret cisco
+
+line vty 0 4 
+ transport input telnet
+ login local
+

@@ -1,0 +1,16 @@
+
+ip access-list extended DENY-8.8.8.8
+ deny ip any host 8.8.8.8
+ permit ip any any
+interface g0/0
+ ip access-group DENY-8.8.8.8 in
+
+
+##RT_02##
+interface g0/1
+ ip add 8.8.8.2 255.255.255.0
+ no shutdown
+interface g0/0
+ ip add 172.16.10.1 255.255.255.0
+ no shutdown
+ip route 0.0.0.0 0.0.0.0 8.8.8.1
