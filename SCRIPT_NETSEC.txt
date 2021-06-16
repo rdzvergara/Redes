@@ -1,0 +1,105 @@
+######################
+hostname R1
+no ip domain-lookup
+interface g0/0
+ ip add 10.1.1.1 255.255.255.0
+ no shutdown
+interface g0/1
+ ip add 192.168.1.1 255.255.255.0
+ no shutdown
+router ospf 1
+ router-id 1.1.1.1
+ network 10.1.1.1 0.0.0.0 area 0
+ network 192.168.1.1 0.0.0.0 area 0
+ passive-interface g0/1
+
+##################
+
+hostname R2
+no ip domain-lookup
+interface g0/0
+ ip add 10.1.1.2 255.255.255.0
+ no shutdown
+interface g0/1
+ ip add 10.2.2.2 255.255.255.0
+ no shutdown
+router ospf 1
+ router-id 2.2.2.2
+ network 10.1.1.2 0.0.0.0 area 0
+ network 10.2.2.2 0.0.0.0 area 0
+
+##################
+
+hostname R3
+no ip domain-lookup
+interface g0/0
+ ip add 10.2.2.1 255.255.255.0
+ no shutdown
+interface g0/1
+ ip add 192.168.3.1 255.255.255.0
+ no shutdown
+router ospf 1
+ router-id 3.3.3.3
+ network 10.2.2.1 0.0.0.0 area 0
+ network 192.168.3.1 0.0.0.0 area 0
+ passive-interface g0/1
+
+##STATIC ROUTE##
+##Nos roteadores STUB##
+ip route 0.0.0.0 0.0.0.0 10.1.1.2
+ip route 0.0.0.0 0.0.0.0 10.2.2.2
+
+##R2##
+
+ip route 192.168.1.0 255.255.255.0 10.1.1.1
+ip route 192.168.3.0 255.255.255.0 10.2.2.1
+
+#######################
+
+username user01 secret cisco_user01
+username admin privilege 15 secret cisco
+enable secret cisco_admin
+
+username SUPORTE_N1 privilege 5 secret cisco5
+enable secret level 5 cisco5
+privilege exec level 5 show ip interface brief
+privilege exec level 5 show ip route
+privilege exec level 5 ping
+privilege exec level 5 traceroute
+
+username SUPORTE_N2 privilege 10 secret cisco10
+enable secret level 10 cisco10
+privilege exec level 10 configure terminal
+privilege configure level 10 interface gigabitEthernet
+privilege interface level 10 ip address
+privilege interface level 10 shutdown
+privilege interface level 10 no shutdown
+
+#######################
+
+aaa new-model
+enable secret cisco_root
+enable view
+
+configure terminal
+parser view SUPORTE_N1
+ secret cisco_n1
+ commands exec include show ip interface brief
+ commands exec include show ip route
+ commands exec include ping
+ commands exec include traceroute
+parser view SUPORTE_N2
+ secret cisco_n2
+ commands exec include configure terminal
+ commands exec include reload 
+ commands exec include all show
+ commands configure include interface gigabitethernet
+ commands interface include ip address
+ commands interface include shutdown
+ commands interface include no shutdown
+ 
+parser view ADMIN superview
+ secret admin_superview
+ view SUPORTE_N1
+ view SUPORTE_N2
+
