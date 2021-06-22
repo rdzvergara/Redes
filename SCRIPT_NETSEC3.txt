@@ -1,0 +1,46 @@
+User: student
+Pass: StudentPass
+###USER RADIUS###
+user: raduser
+pass: upass123
+#################
+###USER TACACS###
+user: tacadmin
+pass: tacpass1
+user: tacreader
+pass: tacpass2
+#################
+
+##########################
+##########RADIUS##########
+##########################
+aaa new-model
+radius server RADIUS
+  address ipv4 192.168.0.105 auth-port 1812 acct-port 1813
+  key $trongPass
+aaa authentication login RAD-AUTH group radius local
+line vty 0 4
+ login authentication RAD-AUTH
+ transport input telnet
+
+##########################
+##########TACACS##########
+##########################
+aaa new-model
+username localuser algorithm-type scrypt secret cisco
+tacacs server TACACS
+  address ipv4 192.168.0.105
+  key $trongPass
+  single-connection
+aaa group server tacacs+ TACACS-GP
+   server name TACACS
+aaa authentication login default group TACACS-GP local
+aaa authorization exec default group TACACS-GP none
+aaa authorization commands 0 default group TACACS-GP none
+aaa authorization commands 1 default group TACACS-GP none
+aaa authorization commands 15 default group TACACS-GP none
+aaa authorization config-commands
+aaa authorization console
+aaa accounting exec default start-stop group TACACS-GP
+aaa accounting commands 15 default start-stop group TACACS-GP
+

@@ -1,0 +1,56 @@
+PC1 não pode ter conectividade IP com PC4
+
+##ACL PADRÃO NUMERADA##
+
+access-list 1 remark DENY-PC1
+access-list 1 deny host 10.0.10.2
+access-list 1 permit any
+interface e0/0.30
+ ip access-group 1 out 
+
+##ACL PADRÃO NOMEADA##
+
+ip access-list standard DENY-PC1
+ deny host 10.0.10.2
+ permit any
+interface e0/0.30
+ ip access-group DENY-PC1 out 
+
+##PC3 pode se comunicar com qualquer host exceto
+os hosts da VLAN 10##
+ip access-list standard CONTROL-PC3
+ deny host 10.0.20.2
+ permit any
+interface e0/0.10
+ ip access-group CONTROL-PC3 out
+
+##############################################
+
+-Somente PC1 poderá acessar SSH no SERVER
+-Somente PC2 poderá acessar HTTPs no SERVER
+ip access-list extended TRAFFIC-CONTROL
+ permit tcp host 10.0.10.2 host 10.0.40.2 eq 22
+ permit tcp host 10.0.10.3 host 10.0.40.2 eq 443
+ deny ip any any
+interface e0/0.10
+ ip access-group TRAFFIC-CONTROL in
+
+##############################################
+
+-PC1 pode ter somente acesso SSH e HTTPs no server
+-PC2 pode ter somente acesso TELNET e HTTP no server
+-PC3 pode ter somente conectividade IP com PC4
+-VLAN 10 nao pode ter conectividade icmp com a VLAN30, porém
+outros trafegos deve ser permitidos
+ip access-list extended TRAFFIC-CONTROL
+ permit tcp host 10.0.10.2 host 10.0.40.2 eq 22 
+ permit tcp host 10.0.10.2 host 10.0.40.2 eq 443 
+ permit tcp host 10.0.10.3 host 10.0.40.2 eq 23 
+ permit tcp host 10.0.10.3 host 10.0.40.2 eq 80 
+ permit ip host 10.0.20.2 host 10.0.30.2  
+ deny icmp 10.0.10.0 0.0.0.255 10.0.30.0 0.0.0.255
+ permit ip 10.0.10.0 0.0.0.255 10.0.30.0 0.0.0.255
+interface e0/0.10
+ ip access-group TRAFFIC-CONTROL in
+interface e0/0.20
+ ip access-group TRAFFIC-CONTROL in
